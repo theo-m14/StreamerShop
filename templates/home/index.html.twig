@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+
+    <h1>Accueil</h1>
+    {% if app.user %}
+        <p>Hello {{ app.user.email }}</p>
+        {% for plan in plans %}
+            <p>{{ plan.name }}</p>
+            <p>{{ plan.price / 100 }} €</p>
+            <a href="{{ plan.paymentLink ~ '?prefilled_email=' ~ app.user.email ~ '&client_reference_id=' ~ app.user.id }}" target="_blank">S'abonner</a>
+        {% endfor %}
+    {% else %}
+        <p>Vous n'êtes pas connecté</p>
+    {% endif %}
+{% endblock %}

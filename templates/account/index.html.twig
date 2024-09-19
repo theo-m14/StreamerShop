@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte{% endblock %}
+
+{% block body %}
+
+    <h1>Mon compte</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Montant</th>
+                <th>Lien</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+                <tr>
+                    <td class="invoice-date">{{ invoice.createdAt|date('d/m/Y') }}</td>
+                    <td class="invoice-amount">{{ (invoice.amountPaid/100) }} €</td>
+                    <td class="invoice-link"><a href="{{ invoice.hostedInvoiceUrl }}" target="_blank">Voir la facture</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% set manual = false %}
+    {% for subscription in app.user.subscriptions %}
+        {% if subscription.currentPeriodEnd > date('now') and subscription.active %}
+                <p>Vous avez un abonnement actif depuis le {{ subscription.currentPeriodStart|date('d/m/Y') }} avec le plan {{ subscription.plan.name }}</p>
+                {% if 'manual' in subscription.stripeId %}
+                    {% set manual = true %}
+                {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if app.user.subscriptions|length > 0 and manual == false %}
+        <a href="{{ stripeUserPortal }}" class='stripe-button'>Gérer mes abonnements</a>
+    {% endif %}
+
+{% endblock %}

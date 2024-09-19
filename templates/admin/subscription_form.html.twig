@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin | Création Abonnement
+{% endblock %}
+
+{% block body %}
+
+	<h1>Créer un abonnement</h1>
+	{{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_label(form.currentPeriodStart) }}
+        {{ form_widget(form.currentPeriodStart) }}
+        {{ form_errors(form.currentPeriodStart) }}
+        {{ form_label(form.currentPeriodEnd) }}
+        {{ form_widget(form.currentPeriodEnd) }}
+        {{ form_errors(form.currentPeriodEnd) }}
+        {{ form_label(form.plan) }}
+        {{ form_widget(form.plan) }}
+        {{ form_errors(form.plan) }}
+        {{ form_label(form.user) }}
+        {{ form_widget(form.user) }}
+        {{ form_errors(form.user) }}
+        <button type="submit">Valider</button>
+	{{ form_end(form) }}
+
+{% endblock %}

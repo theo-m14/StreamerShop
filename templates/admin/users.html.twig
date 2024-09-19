@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin | Utilisateurs{% endblock %}
+
+{% block body %}
+<h1>Utilisateurs</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Abonné jusqu'au</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles|join(', ') }}</td>
+                {% set isSub = false %}
+                {% for subscription in user.subscriptions %}
+                    {% if subscription.currentPeriodEnd > date('now') and subscription.active == true %}
+                        {% set isSub = true %}
+                        <td>{{ subscription.currentPeriodEnd|date("d/m/Y H:i:s", 'Europe/Paris') }} <a href="{{ path('app_admin_edit_subscription', {'id': subscription.id}) }}"><i class="fa-regular fa-pen-to-square"></i></a></td>
+                    {% endif %}
+                {% endfor %}
+                {% if isSub == false %}
+                    <td><a href="{{ path('app_admin_create_subscription', {'id': user.id}) }}"><i class="fa-regular fa-plus"></i></a></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody> 
+</table>
+{% endblock %}

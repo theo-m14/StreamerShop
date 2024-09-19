@@ -4,7 +4,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-
+    timezone: '%env(APP_TIMEZONE)%'
+    stripe_api_key: '%env(STRIPE_API_KEY)%'
+    stripe_user_portal: '%env(STRIPE_USER_PORTAL)%'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -20,5 +22,18 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\PaymentApiClient:
+        alias: App\Service\StripeApiClient
+
+    App\Service\StripeApiClient:
+        arguments:
+            $apiKey: '%env(STRIPE_API_KEY)%'
+
+    App\Webhook\StripeRequestParser:
+        arguments:
+            $apiKey: '%env(STRIPE_API_KEY)%'
+            $endpointSecret: '%env(STRIPE_ENDPOINT_SECRET)%'
+
+    
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

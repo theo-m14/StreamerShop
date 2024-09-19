@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Double Authentification
+{% endblock %}
+{% block body %}
+
+
+	<form action="{{ path('checkOtp') }}" method="post">
+		<h1 >Double Authentification</h1>
+		<p>
+			1. Télécharger l'application Google Authenticator sur votre téléphone et scanner le QR code.
+		</p>
+		<img src="{{ path('generateQrCode') }}" id="qr-code" alt="QR Code">
+		<p>
+			Ou copier le code suivant dans votre application :
+		</p>
+		<p style="word-break: break-all;">
+			{{ code }}
+		</p>
+		
+        <p>2. Saisir le code affiché dans votre application</p>
+		<p>
+			<input id="_auth_code" type="text" name="code" autocomplete="one-time-code" autofocus inputmode="numeric" pattern="[0-9]*"/>
+		</p>
+		<input type="submit" value="Connexion"/>
+		{# The logout link gives the user a way out if they can't complete two-factor authentication #}
+		<p>
+			<a href="{{ path('app_logout') }}">Annuler</a>
+		</p>
+	</form>
+
+
+{% endblock %}
