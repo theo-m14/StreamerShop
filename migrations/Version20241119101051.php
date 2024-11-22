@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240913111037 extends AbstractMigration
+final class Version20241119101051 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,12 +20,12 @@ final class Version20240913111037 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user ADD otp_enabled TINYINT(1) DEFAULT NULL');
+        $this->addSql('ALTER TABLE product ADD image_size INT DEFAULT NULL, ADD published_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', ADD is_visible TINYINT(1) NOT NULL, CHANGE image image_name VARCHAR(255) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE `user` DROP otp_enabled');
+        $this->addSql('ALTER TABLE product DROP image_size, DROP published_at, DROP is_visible, CHANGE image_name image VARCHAR(255) DEFAULT NULL');
     }
 }

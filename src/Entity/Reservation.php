@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ReservationRepository;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -18,9 +19,11 @@ class Reservation
     private ?string $sessionId = null;
 
     #[ORM\Column]
+    #[Groups(['read:product'])]
     private ?int $quantity = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['read:product'])]
     private ?\DateTimeInterface $expirationTime = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]

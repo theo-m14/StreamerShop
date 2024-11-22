@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ username }}{% endblock %}
+
+{% block body %}
+    <div {{ react_component('ShopController', { initialProducts: products }) }}>
+
+    </div>
+{% endblock %}

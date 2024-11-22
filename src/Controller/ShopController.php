@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\User;
+use App\Entity\Product;
+use App\Entity\Reservation;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Context\Normalizer\ObjectNormalizerContextBuilder;
+
+class ShopController extends AbstractController
+{
+    #[Route('/{username}', name: 'app_shop')]
+    public function index(string $username, EntityManagerInterface $entityManager,SerializerInterface $serializer): Response
+    {   
+        $context = (new ObjectNormalizerContextBuilder())
+            ->withGroups('read:product')
+            ->toArray(); 
+
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+        $products = $entityManager->getRepository(Product::class)->findBy(['user' => $user, 'isVisible' => true]);
+
+        foreach($products as $product){
+            $product->setStock($this->calculateAvailableStock($product, 0, $entityManager));
+        }
+        
+        $products = $serializer->serialize($products, 'json', $context);
+
+        return $this->render('shop/index.html.twig', [
+            'products' => $products,
+            'username' => $username,
+        ]);
+    }
+
+    #[Route('/reserve/{id}', name: 'app_reserve')]
+    public function reserve(Product $product, EntityManagerInterface $entityManager, Request $request): Response
+    {   
+        $request = json_decode($request->getContent(), true);
+        //On cherche d'abord si une réservation existe déjà pour ce produit et cette session
+        $reservation = $entityManager->getRepository(Reservation::class)->findOneBy(['product' => $product, 'sessionId' => $request['cartId']]);
+        if($reservation){
+            $reservation->setQuantity($reservation->getQuantity() + $request['quantity']);
+        }else{
+            $reservation = new Reservation();
+            $reservation->setProduct($product);
+            $reservation->setSessionId($request['cartId']);
+            $reservation->setQuantity($request['quantity']);
+            $reservation->setExpirationTime(new \DateTime('+5 minutes'));
+        }
+        $entityManager->persist($reservation);
+        $entityManager->flush();
+        return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/unreserve/{id}', name: 'app_unreserve')]
+    public function unreserve(int $id, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $request = json_decode($request->getContent(), true);
+        $reservation = $entityManager->getRepository(Reservation::class)->findOneBy(['product' => $id, 'sessionId' => $request['cartId']]);
+        if($reservation && $reservation->getQuantity() > 1){
+            $reservation->setQuantity($reservation->getQuantity() - 1);
+        }else{
+            $entityManager->remove($reservation);
+        }
+        $entityManager->flush();
+        return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/{id}/availableStock', name: 'app_product_availableStock', methods: ['POST'])]
+    public function availableStock(Product $product, Request $request, EntityManagerInterface $entityManager): Response
+    {   
+        $quantity = $request->getPayload()->getInt('quantity');
+        return new JsonResponse(['availableStock' => $this->calculateAvailableStock($product, $quantity, $entityManager)]);
+    }
+
+    private function calculateAvailableStock(Product $product, int $quantity,EntityManagerInterface $entityManager): int
+    {
+        $reservationRepository = $entityManager->getRepository(Reservation::class);
+        $reservations = $reservationRepository->findBy(['product' => $product]);
+        //filtre les reservations qui sont pas encore passées
+        $reservations = array_filter($reservations, function($reservation) {
+            return $reservation->getExpirationTime() > new \DateTime();
+        });
+        $totalReserved = array_reduce($reservations, function($carry, $reservation) {
+            return $carry + $reservation->getQuantity();
+        }, 0);
+        return $product->getStock() - $totalReserved - $quantity;
+    }
+}
