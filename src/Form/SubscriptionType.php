@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Plan;
-use App\Entity\user;
+use App\Entity\User;
 use App\Entity\Subscription;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,7 +30,7 @@ class SubscriptionType extends AbstractType
                 'label' => 'Plan',
             ])
             ->add('user', EntityType::class, [
-                'class' => user::class,
+                'class' => User::class,
                 'choice_label' => 'email',
                 'label' => 'Utilisateur',
             ])
