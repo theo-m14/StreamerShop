@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use Stripe\StripeClient;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
+use App\Repository\InvoiceRepository;
 use Endroid\QrCode\Encoding\Encoding;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
-use App\Repository\InvoiceRepository;
+
 class AccountController extends AbstractController
 {   
     #[IsGranted('ROLE_USER')]
@@ -105,5 +107,38 @@ class AccountController extends AbstractController
 
         $this->addFlash('success','Votre Authenticator a été correctement configuré');
         return $this->redirectToRoute('app_home');
+    }
+
+    #[Route('/connectStripeAccount', name: 'connectStripeAccount', methods:['GET'])]
+    public function connectStripeAccount(): Response
+    {   
+        /** @var User $user */
+        $user = $this->getUser();
+        
+        $stripe = new StripeClient($this->getParameter('stripe_api_key'));
+        $account = $stripe->accounts->create([
+            'type' => 'standard',
+            'email' => $user->getEmail(),
+            'capabilities' => [
+                'card_payments' => ['requested' => true],
+                'transfers' => ['requested' => true],
+            ],
+            'country' => 'FR',
+            'business_type' => 'individual',
+        ]);
+
+        // $user->setStripeConnectId($account->id);
+        // $entityManager->persist($user);
+        // $entityManager->flush();
+        
+        // Stocker l'account ID pour une utilisation ultérieure
+        $accountLinks = $stripe->accountLinks->create([
+            'account' => $account->id,
+            'refresh_url' => $this->generateUrl('connectStripeAccount', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL),
+            'return_url' => $this->generateUrl('app_account', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL),
+            'type' => 'account_onboarding',
+        ]);
+        
+        return $this->redirect($accountLinks->url);
     }
 }

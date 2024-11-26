@@ -15,6 +15,7 @@ export default function ({product, addToCart}) {
         <img src={`/images/products/${product.imageName}`} alt={product.title} />
         <div className="product-name">{product.title}</div>
         <div className="product-price">{product.price}</div>
+        <div className="product-stock">{product.stock}</div>
         {product.error && <div className="product-error">{product.errorMessage}</div>}
         {product.stock > 0 && <input type="number" min="1" defaultValue="1" max={product.stock} onChange={handleQuantityChange} />}
         {!product.error && product.stock > 0 && <button onClick={() => {addToCart(product, quantity)}}>Ajouter au panier</button>}

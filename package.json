@@ -28,6 +28,10 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@stripe/connect-js": "^3.3.18",
+        "@stripe/react-connect-js": "^3.3.19",
+        "@stripe/react-stripe-js": "^3.0.0",
+        "@stripe/stripe-js": "^5.2.0",
         "uuid": "^11.0.3"
     }
 }

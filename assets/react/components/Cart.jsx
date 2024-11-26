@@ -1,7 +1,37 @@
 import React from 'react';
 import ProductCard from './ProductCard';
 
-export default function ({cart, removeFromCart}) {
+export default function ({cart, removeFromCart, setClientSecret}) {
+
+    const handleCheckout = async () => {
+        try {
+            const response = await fetch('/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cart: cart.map(item => ({
+                        id: item.id,
+                        name: item.title,
+                        price: item.price,
+                        quantity: item.quantitySelected
+                    }))
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors du checkout');
+            }
+
+            const checkoutSession = await response.json();
+
+            // Gérer la réponse de Stripe ici
+            setClientSecret(checkoutSession.client_secret);
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
 
     return (
         <div className="cart">
@@ -18,6 +48,7 @@ export default function ({cart, removeFromCart}) {
                 </div>
             ))}
             <div className="cart-total">Total : {cart.reduce((acc, product) => (acc + product.price * product.quantitySelected), 0).toFixed(2)} €</div>
+            <button onClick={handleCheckout}>Passer au paiement</button>
         </div>
     );
 }
