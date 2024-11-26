@@ -32,6 +32,9 @@ class Order
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'associatedOrder')]
     private Collection $orderItem;
 
+    #[ORM\Column(length: 255)]
+    private ?string $checkoutSessionId = null;
+
     public function __construct()
     {
         $this->orderItem = new ArrayCollection();
@@ -104,6 +107,18 @@ class Order
                 $orderItem->setAssociatedOrder(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCheckoutSessionId(): ?string
+    {
+        return $this->checkoutSessionId;
+    }
+
+    public function setCheckoutSessionId(string $checkoutSessionId): static
+    {
+        $this->checkoutSessionId = $checkoutSessionId;
 
         return $this;
     }
