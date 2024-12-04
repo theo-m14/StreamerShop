@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Order;
 use App\Entity\Product;
+use App\Entity\OrderItem;
+use App\Entity\OrderStatut;
 use App\Entity\Reservation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -96,7 +99,7 @@ class ShopController extends AbstractController
     }
 
     #[Route('/checkout', name: 'app_checkout', methods: ['POST'])]
-    public function createCheckoutSession(Request $request): JsonResponse
+    public function createCheckoutSession(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $cart = $data['cart'];
@@ -106,6 +109,8 @@ class ShopController extends AbstractController
         $line_items = [];
 
         $total = 0;
+
+        $accountId = $this->getAccountIdByProductId($cart[0]['id'], $entityManager);
 
         foreach ($cart as $item) {
             $product = [
@@ -125,12 +130,14 @@ class ShopController extends AbstractController
             'payment_intent_data' => [
                 //On prends 0.2% de la transaction
                 'application_fee_amount' => 0.2 * $total * 100,
-                'transfer_data' => ['destination' => 'acct_1QOzHDDH0QWv4Y6k'],
+                'transfer_data' => ['destination' => $accountId],
             ],
             'mode' => 'payment',
             'ui_mode' => 'embedded',
             'return_url' => $this->generateUrl('app_checkout_return', ["session_id" => "{CHECKOUT_SESSION_ID}"], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
+
+        $this->createOrder($checkoutSession->id, $data['cart'], $total, $entityManager);
 
         return new JsonResponse(['client_secret' => $checkoutSession->client_secret]);
     }
@@ -138,11 +145,39 @@ class ShopController extends AbstractController
     #[Route('/checkout/return', name: 'app_checkout_return')]
     public function checkoutReturn(Request $request): Response
     {
-
         $sessionId = $request->query->get('session_id');
         $stripe = new \Stripe\StripeClient($this->getParameter('stripe_api_key'));
         $checkoutSession = $stripe->checkout->sessions->retrieve($sessionId);
         dd($checkoutSession);
         return $this->render('shop/checkout_success.html.twig', ['checkoutSession' => $checkoutSession]);
+    }
+
+    public function getAccountIdByProductId(int $productId, EntityManagerInterface $entityManager): string
+    {
+        $product = $entityManager->getRepository(Product::class)->find($productId);
+        return $product->getUser()->getStripeConnectId();
+    }
+
+    public function createOrder(string $checkoutSessionId, array $cart, float $total, EntityManagerInterface $entityManager): void
+    {
+        $order = new Order();
+        $order->setCheckoutSessionId($checkoutSessionId);
+        foreach ($cart as $item) {
+            $product = $entityManager->getRepository(Product::class)->find($item['id']);
+            $orderItem = new OrderItem();
+            $orderItem->setProduct($product);
+            $orderItem->setQuantity($item['quantity']);
+            $entityManager->persist($orderItem);
+            $order->addOrderItem($orderItem);
+        }
+        $order->setTotal($total);
+        $order->setCreatedAt(new \DateTimeImmutable());
+        $order->setStatut($entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'Pending']));
+        //TODO:Set user by account Id
+        $product = $entityManager->getRepository(Product::class)->find($cart[0]['id']);
+        $user = $product->getUser();
+        $order->setUser($user);
+        $entityManager->persist($order);
+        $entityManager->flush();
     }
 }

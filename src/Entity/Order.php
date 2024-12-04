@@ -35,6 +35,10 @@ class Order
     #[ORM\Column(length: 255)]
     private ?string $checkoutSessionId = null;
 
+    #[ORM\ManyToOne(inversedBy: 'orders')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->orderItem = new ArrayCollection();
@@ -119,6 +123,18 @@ class Order
     public function setCheckoutSessionId(string $checkoutSessionId): static
     {
         $this->checkoutSessionId = $checkoutSessionId;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

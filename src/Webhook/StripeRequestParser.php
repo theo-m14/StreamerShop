@@ -57,54 +57,21 @@ final class StripeRequestParser extends AbstractRequestParser
         switch ($event['type']) {
             case 'checkout.session.completed':
                 $checkoutSession = $event['data']['object'];
-
-                $subscriptionId = $checkoutSession['subscription'];
-
-                $subscription = $this->paymentApiClient->getSubscription($subscriptionId);
-
-                $planId = $subscription['plan']['id'];
-
-                $userId = $checkoutSession['client_reference_id'];
-
-                $user = $this->userRepository->find($userId);
-
-                //User verification
-                if(!$user) {
-                    throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'User not found.');
-                }
-
-                //Plan verification
-                $plan = $this->planRepository->findOneBy(['stripeId' => $planId]);
-
-                if(!$plan) {
-                    throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Plan not found.');
-                }
-
-                //Remote event creation
-                return new RemoteEvent('checkout.session.completed', $subscriptionId, [
-                    'user' => $user,
-                    'plan' => $plan,
-                    'user_stripe_id' => $checkoutSession['customer'],
-                    'current_period_start' => $subscription['current_period_start'],
-                    'current_period_end' => $subscription['current_period_end'],
+                return new RemoteEvent('checkout.session.completed', $checkoutSession['id'], [
+                    'email' => $checkoutSession['customer_email'],
                 ]);
                 break;
-            case 'invoice.paid':
-                $subscriptionId = $event['data']['object']['subscription'];
-
-                //Subscription verification
-                if(!$subscriptionId) {
-                    throw new RejectWebhookException(Response::HTTP_BAD_REQUEST, 'Subscription not found.');
-                }
-
-                //Remote event creation
-                return new RemoteEvent('invoice.paid', $subscriptionId, [
-                    'id' => $event['data']['object']['id'],
-                    'number' => $event['data']['object']['number'],
-                    'amount_paid' => $event['data']['object']['amount_paid'],
-                    'hosted_invoice_url' => $event['data']['object']['hosted_invoice_url'],
+            case 'checkout.session.async_payment_succeeded':
+                $checkoutSession = $event['data']['object'];
+                return new RemoteEvent('checkout.session.async_payment_succeeded', $checkoutSession['id'], [
+                    'email' => $checkoutSession['customer_email'],
                 ]);
-
+                break;
+            case 'checkout.session.async_payment_failed':
+                $checkoutSession = $event['data']['object'];
+                return new RemoteEvent('checkout.session.async_payment_failed', $checkoutSession['id'], [
+                    'email' => $checkoutSession['customer_email'],
+                ]);
                 break;
             default:
                 //Invalid event type

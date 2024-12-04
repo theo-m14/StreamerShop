@@ -5,8 +5,10 @@ namespace App\RemoteEvent;
 use DateTime;
 use App\Entity\Invoice;
 use Stripe\Subscription;
+use App\Entity\OrderStatut;
 use App\Repository\PlanRepository;
 use App\Repository\UserRepository;
+use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SubscriptionRepository;
 use Symfony\Component\RemoteEvent\RemoteEvent;
@@ -20,8 +22,7 @@ final class StripeWebhookConsumer implements ConsumerInterface
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly SubscriptionRepository $subscriptionRepository,
-        private readonly PlanRepository $planRepository,
+        private readonly OrderRepository $orderRepository,
     ) {
     }
 
@@ -32,66 +33,66 @@ final class StripeWebhookConsumer implements ConsumerInterface
             $this->handleCheckoutSessionCompleted($event);
         }
 
-        if ($event->getName() === 'invoice.paid') {
-            $this->handleInvoicePaid($event);
+        if ($event->getName() === 'checkout.session.async_payment_succeeded') {
+            $this->handleCheckoutSessionAsyncPaymentSucceeded($event);
+        }
+
+        if ($event->getName() === 'checkout.session.async_payment_failed') {
+            $this->handleCheckoutSessionAsyncPaymentFailed($event);
         }
     }
 
     private function handleCheckoutSessionCompleted(RemoteEvent $event): void
     {
         //Subscription creation from RemoteEvent
-        $user = $event->getPayload()['user'];
-        $subscription = new AppSubscription();
-        
-        $plan = $event->getPayload()['plan'];
-        $subscription->setPlan($plan);
-        $subscription->setStripeId($event->getId());
-        $subscription->setCurrentPeriodStart(new \Datetime(date('c', $event->getPayload()['current_period_start'])));
-        $subscription->setCurrentPeriodEnd(new \Datetime(date('c', $event->getPayload()['current_period_end'])));
-        $subscription->setUser($user);
-        $subscription->setActive(true);
-        $user->setStripeId($event->getPayload()['user_stripe_id']);
+        $order = $this->orderRepository->findOneBy(["checkout_session_id" => $event->getId()]);
 
-        // Disable old subscription if needed , repository method have to be create, Stripe::update method to implement in Service\PaymentApiClient
-        // $activeSub = $subscriptionRepository->findActiveSub($user->getId());
-        // if ($activeSub) {
-        //     \Stripe\Subscription::update(
-        //         $activeSub->getStripeId(), [
-        //             'cancel_at_period_end' => false,
-        //         ]
-        //     );
-        //     $activeSub->setIsActive(false);
-        //     $this->entityManager->persist($activeSub);
-        // }
-
-        $this->entityManager->persist($subscription);
+        $order->setStatut($this->entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'waitingPayment']));
+        $this->entityManager->persist($order);
         $this->entityManager->flush();
-
     }
 
-    private function handleInvoicePaid(RemoteEvent $event): void
+    private function handleCheckoutSessionAsyncPaymentSucceeded(RemoteEvent $event): void
     {
-        //Invoice creation from RemoteEvent
-        $subscription = $this->subscriptionRepository->findOneBy(["stripeId" => $event->getId()]);
+        $order = $this->orderRepository->findOneBy(["checkout_session_id" => $event->getId()]);
 
-        $invoice = new Invoice();
-        $invoice->setStripeId($event->getPayload()['id']);
-        $invoice->setSubscription($subscription);
-        $invoice->setNumber($event->getPayload()['number']);
-        $invoice->setAmountPaid($event->getPayload()['amount_paid']);
-        $invoice->setCreatedAt(new \DateTimeImmutable());
-        $invoice->setHostedInvoiceUrl($event->getPayload()['hosted_invoice_url']);
-        $invoice->setUser($subscription->getUser());
-
-        //Subscription update from RemoteEvent
-        $subscription->setCurrentPeriodEnd((new DateTime())->modify('+1 month'));
-        if(!$subscription->isActive()){
-            $subscription->setActive(true);
-        }
-        $this->entityManager->persist($subscription);
-        $this->entityManager->persist($invoice);
-        //Invoice and Subscription flush
-        
+        $order->setStatut($this->entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'paid']));
+        $this->entityManager->persist($order);
         $this->entityManager->flush();
     }
+
+    private function handleCheckoutSessionAsyncPaymentFailed(RemoteEvent $event): void
+    {
+        $order = $this->orderRepository->findOneBy(["checkout_session_id" => $event->getId()]);
+
+        $order->setStatut($this->entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'failed']));
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+    }
+
+    // private function handleInvoicePaid(RemoteEvent $event): void
+    // {
+    //     //Invoice creation from RemoteEvent
+    //     $subscription = $this->subscriptionRepository->findOneBy(["stripeId" => $event->getId()]);
+
+    //     $invoice = new Invoice();
+    //     $invoice->setStripeId($event->getPayload()['id']);
+    //     $invoice->setSubscription($subscription);
+    //     $invoice->setNumber($event->getPayload()['number']);
+    //     $invoice->setAmountPaid($event->getPayload()['amount_paid']);
+    //     $invoice->setCreatedAt(new \DateTimeImmutable());
+    //     $invoice->setHostedInvoiceUrl($event->getPayload()['hosted_invoice_url']);
+    //     $invoice->setUser($subscription->getUser());
+
+    //     //Subscription update from RemoteEvent
+    //     $subscription->setCurrentPeriodEnd((new DateTime())->modify('+1 month'));
+    //     if(!$subscription->isActive()){
+    //         $subscription->setActive(true);
+    //     }
+    //     $this->entityManager->persist($subscription);
+    //     $this->entityManager->persist($invoice);
+    //     //Invoice and Subscription flush
+        
+    //     $this->entityManager->flush();
+    // }
 }

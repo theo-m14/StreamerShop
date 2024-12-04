@@ -28,6 +28,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@boxtal/parcel-point-map": "^0.0.6",
         "@stripe/connect-js": "^3.3.18",
         "@stripe/react-connect-js": "^3.3.19",
         "@stripe/react-stripe-js": "^3.0.0",
