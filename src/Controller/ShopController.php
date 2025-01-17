@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Order;
+use App\Entity\Adress;
+use App\Entity\Contact;
 use App\Entity\Product;
 use App\Entity\OrderItem;
 use App\Entity\OrderStatut;
@@ -103,6 +105,7 @@ class ShopController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $cart = $data['cart'];
+        $adress = $data['adress'];
 
         $stripe = new \Stripe\StripeClient($this->getParameter('stripe_api_key'));
 
@@ -128,16 +131,16 @@ class ShopController extends AbstractController
         $checkoutSession = $stripe->checkout->sessions->create([
             'line_items' => $line_items,
             'payment_intent_data' => [
-                //On prends 0.2% de la transaction
-                'application_fee_amount' => 0.2 * $total * 100,
+                //On prends 0.2% de la transaction arrondi à 0.01 puis converti en centimes
+                'application_fee_amount' => round((0.2 / 100) * $total, 2) * 100,
                 'transfer_data' => ['destination' => $accountId],
             ],
             'mode' => 'payment',
             'ui_mode' => 'embedded',
-            'return_url' => $this->generateUrl('app_checkout_return', ["session_id" => "{CHECKOUT_SESSION_ID}"], UrlGeneratorInterface::ABSOLUTE_URL),
+            'return_url' => 'http://127.0.0.1:8000/checkout/return?session_id={CHECKOUT_SESSION_ID}',
         ]);
 
-        $this->createOrder($checkoutSession->id, $data['cart'], $total, $entityManager);
+        $this->createOrder($checkoutSession->id, $cart, $total, $entityManager, $adress);
 
         return new JsonResponse(['client_secret' => $checkoutSession->client_secret]);
     }
@@ -158,7 +161,7 @@ class ShopController extends AbstractController
         return $product->getUser()->getStripeConnectId();
     }
 
-    public function createOrder(string $checkoutSessionId, array $cart, float $total, EntityManagerInterface $entityManager): void
+    public function createOrder(string $checkoutSessionId, array $cart, float $total, EntityManagerInterface $entityManager, array $adressInfo): void
     {
         $order = new Order();
         $order->setCheckoutSessionId($checkoutSessionId);
@@ -178,6 +181,25 @@ class ShopController extends AbstractController
         $user = $product->getUser();
         $order->setUser($user);
         $entityManager->persist($order);
+        $adress = new Adress();
+        $adress->setType("RESIDENTIAL");
+        $adress->setCountryCode($adressInfo['parcelPoint']['location']['country']);
+        $adress->setCity($adressInfo['city']);
+        $adress->setPostalCode($adressInfo['zipCode']);
+        $adress->setAdressLine($adressInfo['street']);
+        $adress->setParcelPointCode($adressInfo['parcelPoint']['code']);
+        //$adress->setAdditionalInformation($adress['additionalInformation']);
+        $order->setAdress($adress);
+        $entityManager->persist($adress);
+
+        $contact = new Contact();
+        $contact->setEmail($adressInfo['email']);
+        $contact->setPhone($adressInfo['phone']);
+        $contact->setFirstName($adressInfo['firstName']);
+        $contact->setLastName($adressInfo['lastName']);
+
+        $adress->setContact($contact);
+        $entityManager->persist($contact);
         $entityManager->flush();
     }
 }

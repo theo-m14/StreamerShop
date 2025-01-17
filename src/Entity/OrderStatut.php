@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\OrderStatutRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\OrderStatutRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: OrderStatutRepository::class)]
 class OrderStatut
@@ -16,6 +17,7 @@ class OrderStatut
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:order'])]
     private ?string $statut = null;
 
     /**

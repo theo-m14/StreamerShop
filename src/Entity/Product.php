@@ -17,14 +17,14 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:product'])]
+    #[Groups(['read:product', 'read:order'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $ref = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:product'])]
+    #[Groups(['read:product', 'read:order'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -38,7 +38,7 @@ class Product
     private ?int $imageSize = null;
 
     #[ORM\Column]
-    #[Groups(['read:product'])]
+    #[Groups(['read:product', 'read:order'])]
     private ?float $price = null;
 
     #[ORM\Column]

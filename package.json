@@ -28,11 +28,12 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "@boxtal/parcel-point-map": "^0.0.6",
+        "@boxtal/parcel-point-map": "^0.0.7",
         "@stripe/connect-js": "^3.3.18",
         "@stripe/react-connect-js": "^3.3.19",
         "@stripe/react-stripe-js": "^3.0.0",
         "@stripe/stripe-js": "^5.2.0",
+        "react-hook-form": "^7.54.2",
         "uuid": "^11.0.3"
     }
 }

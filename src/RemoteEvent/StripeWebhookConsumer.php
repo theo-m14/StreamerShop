@@ -45,16 +45,24 @@ final class StripeWebhookConsumer implements ConsumerInterface
     private function handleCheckoutSessionCompleted(RemoteEvent $event): void
     {
         //Subscription creation from RemoteEvent
-        $order = $this->orderRepository->findOneBy(["checkout_session_id" => $event->getId()]);
+        $order = $this->orderRepository->findOneBy(["checkoutSessionId" => $event->getId()]);
 
-        $order->setStatut($this->entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'waitingPayment']));
+        switch($event->getPayload()['statut']){
+            case 'paid':
+                $order->setStatut($this->entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'paid']));
+                break;
+            case 'unpaid':
+                $order->setStatut($this->entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'waitingPayment']));
+                break;
+        }
+
         $this->entityManager->persist($order);
         $this->entityManager->flush();
     }
 
     private function handleCheckoutSessionAsyncPaymentSucceeded(RemoteEvent $event): void
     {
-        $order = $this->orderRepository->findOneBy(["checkout_session_id" => $event->getId()]);
+        $order = $this->orderRepository->findOneBy(["checkoutSessionId" => $event->getId()]);
 
         $order->setStatut($this->entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'paid']));
         $this->entityManager->persist($order);
@@ -63,7 +71,7 @@ final class StripeWebhookConsumer implements ConsumerInterface
 
     private function handleCheckoutSessionAsyncPaymentFailed(RemoteEvent $event): void
     {
-        $order = $this->orderRepository->findOneBy(["checkout_session_id" => $event->getId()]);
+        $order = $this->orderRepository->findOneBy(["checkoutSessionId" => $event->getId()]);
 
         $order->setStatut($this->entityManager->getRepository(OrderStatut::class)->findOneBy(['statut' => 'failed']));
         $this->entityManager->persist($order);

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import Cart from '../components/Cart';
 import useCart from '../hooks/useCart';
-import {loadStripe} from '@stripe/stripe-js';
 import Checkout from '../components/Checkout';
 
 export default function ({initialProducts, username}) {
@@ -10,9 +9,13 @@ export default function ({initialProducts, username}) {
 
     const [clientSecret, setClientSecret] = useState(null);
 
+    const [sessionId, setSessionId] = useState(null);
+
     const [products, setProducts] = useState(productsArray);
 
-    const stripePromise = loadStripe('pk_test_51O0mx9Ddah1uLYmzf0SMrTBkSFADmF9sR63AdXlea9ZT8OOfMrzhQIBb62SVTIiTwrnbYbV8QXPJsvtooYRudZb600UHHJ3MFq');
+    const [cartisValidate, setCartisValidate] = useState(false);
+
+    
 
 
     //Fonction pour mettre à jour les produits
@@ -26,9 +29,9 @@ export default function ({initialProducts, username}) {
 
     return (
         <>
-        {clientSecret ? (
+        {cartisValidate ? (
             <div>
-                <Checkout clientSecret={clientSecret} stripePromise={stripePromise} />
+                <Checkout cart={cart} />
             </div>
         ) : (
             <>
@@ -37,7 +40,7 @@ export default function ({initialProducts, username}) {
                 <ProductCard key={product.id} product={product} addToCart={addToCart} />
             ))}
         </div>
-        <Cart cart={cart} removeFromCart={removeFromCart} setClientSecret={setClientSecret} />
+        <Cart cart={cart} removeFromCart={removeFromCart} setCartisValidate={setCartisValidate}/>
             </>
         )}
         </>

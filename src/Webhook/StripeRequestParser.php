@@ -59,6 +59,7 @@ final class StripeRequestParser extends AbstractRequestParser
                 $checkoutSession = $event['data']['object'];
                 return new RemoteEvent('checkout.session.completed', $checkoutSession['id'], [
                     'email' => $checkoutSession['customer_email'],
+                    'statut' => $checkoutSession['payment_status'],
                 ]);
                 break;
             case 'checkout.session.async_payment_succeeded':

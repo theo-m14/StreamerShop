@@ -1,36 +1,41 @@
 import React from 'react';
 import ProductCard from './ProductCard';
 
-export default function ({cart, removeFromCart, setClientSecret}) {
+export default function ({cart, removeFromCart, setCartisValidate}) {
 
-    const handleCheckout = async () => {
-        try {
-            const response = await fetch('/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cart: cart.map(item => ({
-                        id: item.id,
-                        name: item.title,
-                        price: item.price,
-                        quantity: item.quantitySelected
-                    }))
-                })
-            });
+    // const handleCheckout = async () => {
+    //     try {
+    //         const response = await fetch('/checkout', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 cart: cart.map(item => ({
+    //                     id: item.id,
+    //                     name: item.title,
+    //                     price: item.price,
+    //                     quantity: item.quantitySelected
+    //                 }))
+    //             })
+    //         });
 
-            if (!response.ok) {
-                throw new Error('Erreur lors du checkout');
-            }
+    //         if (!response.ok) {
+    //             throw new Error('Erreur lors du checkout');
+    //         }
 
-            const checkoutSession = await response.json();
+    //         const checkoutSession = await response.json();
 
-            // Gérer la réponse de Stripe ici
-            setClientSecret(checkoutSession.client_secret);
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
+    //         // Gérer la réponse de Stripe ici
+    //         setClientSecret(checkoutSession.client_secret);
+    //         setSessionId(checkoutSession.session_id);
+    //     } catch (error) {
+    //         console.error('Erreur:', error);
+    //     }
+    // }
+
+    const handleCheckout = () => {
+        setCartisValidate(true);
     }
 
     return (

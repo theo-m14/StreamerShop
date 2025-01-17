@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\OrderRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\OrderRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
@@ -14,22 +15,27 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:order'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['read:order'])]
     private ?float $total = null;
 
     #[ORM\Column]
+    #[Groups(['read:order'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read:order'])]
     private ?OrderStatut $statut = null;
 
     /**
      * @var Collection<int, OrderItem>
      */
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'associatedOrder')]
+    #[Groups(['read:order'])]
     private Collection $orderItem;
 
     #[ORM\Column(length: 255)]
@@ -38,6 +44,10 @@ class Order
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'orders')]
+    #[Groups(['read:order'])]
+    private ?Adress $adress = null;
 
     public function __construct()
     {
@@ -135,6 +145,18 @@ class Order
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAdress(): ?Adress
+    {
+        return $this->adress;
+    }
+
+    public function setAdress(?Adress $adress): static
+    {
+        $this->adress = $adress;
 
         return $this;
     }
