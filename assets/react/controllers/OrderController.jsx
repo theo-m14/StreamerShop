@@ -9,16 +9,20 @@ export default function ({ initialOrders }) {
 
     return (
         <div key={ordersArray.id} style={{ margin: "auto", width: "100%" }}>
-            <button onClick={() => setCurrentStatusDisplay("paid")}>Payées</button>
-            <button onClick={() => setCurrentStatusDisplay("waitingPayment")}>En attente de paiement</button>
-            <button onClick={() => setCurrentStatusDisplay("pending")}>En attente</button>
-            <table>
+            <div className="tabs is-centered">
+                <ul>
+                    <li className={currentStatusDisplay == "paid" ? "is-active" : ""}><a className="is-active" onClick={() => setCurrentStatusDisplay("paid")}>Payées</a></li>
+                    <li className={currentStatusDisplay == "waitingPayment" ? "is-active" : ""}><a className="is-active" onClick={() => setCurrentStatusDisplay("waitingPayment")}>En attente de paiement</a></li>
+                    <li className={currentStatusDisplay == "pending" ? "is-active" : ""}><a className="is-active" onClick={() => setCurrentStatusDisplay("pending")}>En attente</a></li>
+                </ul>
+            </div>
+            <table className="table is-striped is-fullwidth has-text-centered">
                 <thead>
                     <tr>
-                        <th>Total</th>
-                        <th>Date</th>
-                        <th>Produits</th>
-                        <th>Adresse</th>
+                        <th className='has-text-centered'>Total</th>
+                        <th className='has-text-centered'>Date</th>
+                        <th className='has-text-centered'>Produits</th>
+                        <th className='has-text-centered'>Adresse</th>
                     </tr>
                 </thead>
                     <tbody>

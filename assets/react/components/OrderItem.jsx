@@ -20,9 +20,9 @@ export default function OrderItem({ order }) {
 
                     <td className="adress">
                         <p>{order.adress.contact.firstName} {order.adress.contact.lastName}</p>
-                        <p>{order.adress.adressLine}</p>
-                        <p>{order.adress.city}</p>
                         <p>{order.adress.postalCode}</p>
+                        <p>{order.adress.city}</p>
+                        <p>{order.adress.adressLine}</p>
                     </td>
                 </tr>
     )
