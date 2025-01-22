@@ -1,10 +1,10 @@
 {% for message in app.flashes('success') %}
-	<div class="flash-success">
+	<div class="flash-success has-text-centered">
 		{{ message }}
 	</div>
 {% endfor %}
 {% for message in app.flashes('error') %}
-	<div class="flash-error">
+	<div class="flash-error has-text-centered">
 		{{ message }}
 	</div>
 {% endfor %}

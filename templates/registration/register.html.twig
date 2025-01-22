@@ -7,18 +7,49 @@
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
 
-    <h1>Inscription</h1>
+    
+
+    <div class="container is-max-tablet">
+    
+    {{ form_start(registrationForm, { 'attr': { 'class': 'box register-form' } }) }}
+    <h1 class="title is-4">Inscription</h1>
 
     {{ form_errors(registrationForm) }}
+    <div class="field">
+        {{form_label(registrationForm.email, 'Email', { 'attr': { 'class': 'label' } })}}
+        <div class="control">
+            {{ form_widget(registrationForm.email, { 'attr': { 'class': 'input' } }) }}
+        </div>
+    </div>
+    <div class="field">
+        {{form_label(registrationForm.username, 'Nom d\'utilisateur', { 'attr': { 'class': 'label' } })}}
+        <div class="control">
+            {{ form_widget(registrationForm.username, { 'attr': { 'class': 'input' } }) }}
+        </div>
+    </div>
+    <div class="field">
+        {{form_label(registrationForm.plainPassword.first, 'Mot de passe', { 'attr': { 'class': 'label' } })}}
+        <div class="control">
+            {{ form_widget(registrationForm.plainPassword.first, { 'attr': { 'class': 'input' } }) }}
+        </div>
+    </div>
+    <div class="field">
+        {{form_label(registrationForm.plainPassword.second, 'Confirmation du mot de passe', { 'attr': { 'class': 'label' } })}}
+        <div class="control">
+            {{ form_widget(registrationForm.plainPassword.second, { 'attr': { 'class': 'input' } }) }}
+        </div>
+    </div>
+    <div class="is-flex is-flex-direction-row is-align-items-center">
+            {{ form_widget(registrationForm.agreeTerms, { 'attr': { 'class': 'checkbox mr-2' } }) }}
+            {{form_label(registrationForm.agreeTerms, 'Accepter les conditions d\'utilisation', { 'attr': { 'class': 'label' } })}}
+        
+    </div>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Mot de passe'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+    
 
-        <button type="submit" class="btn">S'inscrire</button>
+        <div class="buttons is-centered">
+            <button type="submit" class="button is-primary mt-6">S'inscrire</button>
+        </div>
     {{ form_end(registrationForm) }}
+    </div>
 {% endblock %}

@@ -1,21 +1,42 @@
-<nav class="main-nav">
-    <a href="{{ path('app_home') }}">
-        {# <img src="/images/logo.png" alt="Logo"> #}
-        <h2>Logo</h2>
-    </a>
-    <ul>
+<nav class="navbar has-shadow is-transparent" role="navigation" aria-label="main navigation">
+	<div class="navbar-brand">
 
-        {% if app.user %}
-            {% if is_granted('ROLE_ADMIN') %}
-                <li><a href="{{ path('app_admin_users') }}">Admin</a></li>
-            {% endif %}
-            <li><a href="{{ path('app_product_index') }}">Gestion boutique</a></li>
-            <li><a href="{{ path('app_shop', {'username': app.user.username}) }}">Ma boutique</a></li>
-            <li><a href="{{ path('app_account') }}">Mon compte</a></li>
-            <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
-        {% else %}
-            <li><a href="{{ path('app_login') }}">Connexion</a></li>
-            <li><a href="{{ path('app_register') }}">Inscription</a></li>
-        {% endif %}
-    </ul>
-</nav>
+
+		<a href="{{ path('app_home') }}" class="navbar-item is-expanded has-text-centered is-size-4 has-text-primary is-flex is-align-items-center">
+			<svg id="svg2" viewBox="-93.133 227.967 673.755 165.414" xmlns="http://www.w3.org/2000/svg" width="673.755px" height="165.414px"><desc>Source: openclipart.org/detail/209545</desc><defs><style>@import url(https://fonts.googleapis.com/css2?family=ADLaM+Display%3Aital%2Cwght%400%2C400&amp;display=swap);</style></defs><g id="SVGRepo_bgCarrier" stroke-width="0" transform="matrix(3.124108, 0, 0, 3.124108, 355.481323, 216.477173)" style=""></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="4.608" transform="matrix(2.547748, 0, 0, 2.759629, -88.095459, 241.177658)" style=""><path class="cls-1" d="M22.25,3.5,11.12,14.63l1.75,1.75L3.5,25.75,14.63,36.88l1.75-1.75,9.37,9.37L36.88,33.37l-1.75-1.75,9.37-9.37L33.37,11.12l-1.75,1.75Zm-3,12.81,6.86,3.84L33,24l-6.85,3.85-6.86,3.84V16.31Z" style="fill: none; stroke: rgb(0, 209, 178);"></path></g><text style="fill: rgb(51, 51, 51); font-family: &quot;ADLaM Display&quot;; font-size: 28px; white-space: pre; transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(2.345373, 0, 0, 4.759602, 7.106335, -52.2258)" x="180.705" y="365.581" id="logo-text">STREAMER.SHOP</text></svg>
+						    </a>
+						    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+						      <span aria-hidden="true"></span>
+						      <span aria-hidden="true"></span>
+						      <span aria-hidden="true"></span>
+						      <span aria-hidden="true"></span>
+						    </a>
+						
+						    </div>
+						    <div class="navbar-menu" id="navMenu">
+						        <div class="navbar-start">
+						            {% if app.user %}
+						                
+						            
+						                {% if is_granted('ROLE_ADMIN') %}
+						                    <a href="{{ path('app_admin_users') }}" class="navbar-item">Admin</a>
+						                {% endif %}
+						                <a href="{{ path('app_shop', {'username': app.user.username}) }}" class="navbar-item">Ma boutique</a>
+						                <a href="{{ path('app_vendor_orders') }}" class="navbar-item">Mes commandes</a>
+						                <a href="{{ path('app_account') }}" class="navbar-item">Mon compte</a>
+						            {% endif %}
+						        </div>
+						        <div class="navbar-end">
+						        <div class="navbar-item">
+						        <div class="is-flex is-align-items-center is-justify-content-space-evenly">
+						            <div id="theme-toggle" {{ react_component('ThemeToggle') }}></div>
+						            {% if app.user %}
+						                <a href="{{ path('app_logout') }}" class="button is-danger">Déconnexion</a>
+						            {% else %}
+						                <a href="{{ path('app_login') }}" class="button is-primary">Connexion</a>
+						            {% endif %}
+						            </div>
+						            </div>
+						        </div>
+						    </div>
+						</nav>

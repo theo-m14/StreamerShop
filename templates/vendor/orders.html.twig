@@ -3,6 +3,6 @@
 {% block title %}Mes commandes{% endblock %}
 
 {% block body %}
-    <h1>Mes commandes</h1>
+    <h1 class="mb-5 is-size-2">Mes commandes</h1>
     <div {{ react_component('OrderController', { initialOrders: orders }) }}>
 {% endblock %}

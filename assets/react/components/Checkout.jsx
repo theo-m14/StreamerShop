@@ -23,12 +23,14 @@ export default function ({cart}) {
     <>
       <AdressSelection setAdress={setAdress} setClientSecret={setClientSecret} cart={cart} />
       {adress && clientSecret && (
-        <EmbeddedCheckoutProvider
-          stripe={stripePromise}
-          options={options}
+        <div className="container is-max-desktop">
+          <EmbeddedCheckoutProvider
+            stripe={stripePromise}
+            options={options}
         >
-          <EmbeddedCheckout />
+          <EmbeddedCheckout className="box mt-6 mb-6" id="embedded-checkout-stripe" />
         </EmbeddedCheckoutProvider>
+        </div>
       )}
     </>
   )
