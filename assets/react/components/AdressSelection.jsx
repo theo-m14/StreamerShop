@@ -45,12 +45,12 @@ export default function AdressSelection({ setAdress, setClientSecret, cart }) {
                             {
                                 code: 'CHRP_NETWORK',
                                 markerTemplate: {
-                                    color: '#94a1e8'
+                                    color: '#00d1b2'
                                 },
                             }
                         ],
                         options: {
-                            primaryColor: '#00FA9A',
+                            primaryColor: '#00d1b2',
                             autoSelectNearestParcelPoint: true
                         },
                     },
@@ -124,11 +124,13 @@ export default function AdressSelection({ setAdress, setClientSecret, cart }) {
     }
 
     return (
-        <div>
-            <h2>Adresse</h2>
-            <form onSubmit={onSubmitAddress}>
-                <div className="form-group">
-                    <label>Pays</label>
+        <div className="container is-max-desktop">
+            
+            <form onSubmit={onSubmitAddress} className="box">
+                <h2 className="title is-4">Adresse</h2>
+                <div className="form-group field">
+                    <label className="label">Pays</label>
+                    <div className="select">
                     <select
                         {...register("country", {
                             required: "Le pays est requis"
@@ -137,12 +139,14 @@ export default function AdressSelection({ setAdress, setClientSecret, cart }) {
                         <option value="France">France</option>
                         <option value="Belgique">Belgique</option>
                     </select>
-                    {errors.country && <span className="error">{errors.country.message}</span>}
+                    </div>
+                    {errors.country && <span className="help is-danger">{errors.country.message}</span>}
                 </div>
 
-                <div className="form-group">
-                    <label>Code postal</label>
+                <div className="form-group field">
+                    <label className="label">Code postal</label>
                     <input
+                        className="input"
                         {...register("zipCode", {
                             required: "Le code postal est requis",
                             pattern: {
@@ -151,61 +155,70 @@ export default function AdressSelection({ setAdress, setClientSecret, cart }) {
                             }
                         })}
                     />
-                    {errors.zipCode && <span className="error">{errors.zipCode.message}</span>}
+                    {errors.zipCode && <span className="help is-danger">{errors.zipCode.message}</span>}
                 </div>
 
-                <div className="form-group">
-                    <label>Ville</label>
+                <div className="form-group field">
+                    <label className="label">Ville</label>
                     <input
+                        className="input"
                         {...register("city", {
                             required: "La ville est requise"
                         })}
                     />
-                    {errors.city && <span className="error">{errors.city.message}</span>}
+                    {errors.city && <span className="help is-danger">{errors.city.message}</span>}
                 </div>
 
-                <div className="form-group">
-                    <label>Rue</label>
+                <div className="form-group field">
+                    <label className="label">Rue</label>
                     <input
+                        className="input"
                         {...register("street", {
                             required: "La rue est requise"
                         })}
                     />
-                    {errors.street && <span className="error">{errors.street.message}</span>}
+                    {errors.street && <span className="help is-danger">{errors.street.message}</span>}
                 </div>
 
-                <button type="submit">Rechercher</button>
+                <button type="submit" className="button is-primary">Rechercher</button>
             </form>
+                        
+            <div className="box">
+                <div id="parcel-point-map" className="has-background-white-ter"  style={{ height: '500px' }}></div>
+            </div>
 
-            <div id="parcel-point-map" style={{ height: '500px' }}></div>
 
             {parcelPoint && (
                 <>
-                    <h2>Informations personnelles</h2>
-                    <form onSubmit={onSubmitFinal}>
-                        <div className="form-group">
-                            <label>Prénom</label>
+                    
+                    <form onSubmit={onSubmitFinal} className="box">
+                        <h2 className="title is-4">Informations personnelles</h2>
+                        <div className="form-group field">
+                            <label className="label">Prénom</label>
                             <input
+                                className="input"
                                 {...register("firstName", {
                                     required: "Le prénom est requis"
                                 })}
                             />
-                            {errors.firstName && <span className="error">{errors.firstName.message}</span>}
+                            {errors.firstName && <span className="help is-danger">{errors.firstName.message}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label>Nom</label>
+                        <div className="form-group field">
+                            <label className="label">Nom</label>
                             <input
+                                className="input"
                                 {...register("lastName", {
                                     required: "Le nom est requis"
                                 })}
                             />
-                            {errors.lastName && <span className="error">{errors.lastName.message}</span>}
+                            {errors.lastName && <span className="help is-danger">{errors.lastName.message}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label>Email</label>
+                        <div className="form-group field">
+                            <label className="label">Email</label>
                             <input
+                                className="input"
                                 type="email"
                                 {...register("email", {
                                     required: "L'email est requis",
@@ -215,12 +228,13 @@ export default function AdressSelection({ setAdress, setClientSecret, cart }) {
                                     }
                                 })}
                             />
-                            {errors.email && <span className="error">{errors.email.message}</span>}
+                            {errors.email && <span className="help is-danger">{errors.email.message}</span>}
                         </div>
 
-                        <div className="form-group">
-                            <label>Téléphone</label>
+                        <div className="form-group field">
+                            <label className="label">Téléphone</label>
                             <input
+                                className="input"
                                 type="tel"
                                 {...register("phone", {
                                     required: "Le numéro de téléphone est requis",
@@ -230,11 +244,12 @@ export default function AdressSelection({ setAdress, setClientSecret, cart }) {
                                     }
                                 })}
                             />
-                            {errors.phone && <span className="error">{errors.phone.message}</span>}
+                            {errors.phone && <span className="help is-danger">{errors.phone.message}</span>}
                         </div>
 
                         <button 
                             type="submit" 
+                            className="button is-primary"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? 'Validation...' : 'Valider'}

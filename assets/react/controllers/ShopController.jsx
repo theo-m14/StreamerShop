@@ -35,7 +35,7 @@ export default function ({initialProducts, username}) {
             </div>
         ) : (
             <>
-            <div className="shop-container">
+            <div className="shop-container is-flex is-flex-wrap-wrap is-justify-content-center container">
                 {products.map((product) => (
                 <ProductCard key={product.id} product={product} addToCart={addToCart} />
             ))}
