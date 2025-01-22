@@ -4,15 +4,15 @@
 
 {% block body %}
 
-    <h1>Accueil</h1>
+    <h1 class="title">Accueil</h1>
     {% if app.user %}
-        <p>Hello {{ app.user.email }}</p>
+        <p class="is-size-7 italic">Bonjour {{ app.user.email }}</p>
         {% for plan in plans %}
             <p>{{ plan.name }}</p>
             <p>{{ plan.price / 100 }} €</p>
             <a href="{{ plan.paymentLink ~ '?prefilled_email=' ~ app.user.email ~ '&client_reference_id=' ~ app.user.id }}" target="_blank">S'abonner</a>
         {% endfor %}
     {% else %}
-        <p>Vous n'êtes pas connecté</p>
+        <p class="is-size-7 italic">Vous n'êtes pas connecté</p>
     {% endif %}
 {% endblock %}

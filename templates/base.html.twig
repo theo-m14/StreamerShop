@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="theme-light">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Accueil{% endblock %}</title>
@@ -16,7 +16,7 @@
     <body>
         {% include "nav.html.twig" %}
 		{% include "flashBag.html.twig" %}
-        <main>
+        <main class="section is-relative">
             {% block body %}{% endblock %}
         </main>
         {% include "footer.html.twig" %}

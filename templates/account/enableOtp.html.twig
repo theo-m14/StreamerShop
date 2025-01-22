@@ -4,30 +4,34 @@
 {% endblock %}
 {% block body %}
 
-
-	<form action="{{ path('checkOtp') }}" method="post">
-		<h1 >Double Authentification</h1>
-		<p>
+	<div class="container is-max-tablet">
+	<form action="{{ path('checkOtp') }}" method="post" class="box">
+		<h1 class="title is-4">Double Authentification</h1>
+		<p class="label">
 			1. Télécharger l'application Google Authenticator sur votre téléphone et scanner le QR code.
 		</p>
-		<img src="{{ path('generateQrCode') }}" id="qr-code" alt="QR Code">
-		<p>
-			Ou copier le code suivant dans votre application :
+		<div class="is-flex is-justify-content-center mb-4">
+				<img class="qr-code" src="{{ path('generateQrCode') }}" id="qr-code" alt="QR Code">
+		</div>
+		<p class="label">
+			 Ou copier le code suivant dans votre application :
 		</p>
 		<p style="word-break: break-all;">
 			{{ code }}
 		</p>
 		
-        <p>2. Saisir le code affiché dans votre application</p>
+        <p class="label mt-4">2. Saisir le code affiché dans votre application</p>
 		<p>
-			<input id="_auth_code" type="text" name="code" autocomplete="one-time-code" autofocus inputmode="numeric" pattern="[0-9]*"/>
+			<input id="_auth_code" class="input" type="text" name="code" autocomplete="one-time-code" autofocus inputmode="numeric" pattern="[0-9]*"/>
 		</p>
-		<input type="submit" value="Connexion"/>
+		<div class="buttons is-centered">
+			<input type="submit" value="Connexion" class="button is-primary mt-4"/>
+		</div>
 		{# The logout link gives the user a way out if they can't complete two-factor authentication #}
-		<p>
+		<p class="mt-4 has-text-centered">
 			<a href="{{ path('app_logout') }}">Annuler</a>
 		</p>
 	</form>
-
+	</div>
 
 {% endblock %}
