@@ -18,5 +18,6 @@ cmds = [
 cmd = 'php-fpm'
 
 [variables]
+COMPOSER_ALLOW_SUPERUSER = "1"
 APP_ENV = "prod"
 APP_RUNTIME_ENV = "prod"
