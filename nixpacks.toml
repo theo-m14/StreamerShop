@@ -3,7 +3,10 @@ nixPkgs = ['nodejs', 'yarn', 'php82', 'php82Packages.composer']
 
 [phases.install]
 cmds = [
-    'composer install --no-dev --optimize-autoloader',
+    'echo "Testing DATABASE_URL: $DATABASE_URL"',
+    'if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL is not set!" && exit 1; fi',
+    'composer require symfony/runtime --no-scripts',
+    'composer install --no-dev --no-interaction --prefer-dist --no-scripts',
     'yarn install'
 ]
 
@@ -11,7 +14,8 @@ cmds = [
 cmds = [
     'yarn build',
     'composer dump-autoload --optimize',
-    'php bin/console cache:clear --env=prod'
+    'APP_RUNTIME_ENV=prod php bin/console cache:clear --env=prod',
+    'php bin/console assets:install public'
 ]
 
 [start]
