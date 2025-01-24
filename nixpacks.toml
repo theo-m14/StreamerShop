@@ -5,7 +5,8 @@ nixPkgs = ['nodejs', 'yarn', 'php82', 'php82Packages.composer']
 cmds = [
     'echo "Testing DATABASE_URL: $DATABASE_URL"',
     'if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL is not set!" && exit 1; fi',
-    'composer require symfony/runtime --no-scripts',
+    'rm -f composer.lock',
+    'composer require symfony/runtime:"^7.1" --no-scripts',
     'composer install --no-dev --no-interaction --prefer-dist --no-scripts',
     'yarn install'
 ]
