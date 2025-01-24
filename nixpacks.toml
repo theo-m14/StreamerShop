@@ -3,6 +3,7 @@ nixPkgs = ['nodejs', 'yarn', 'php82', 'php82Packages.composer']
 
 [phases.install]
 cmds = [
+    'composer require symfony/runtime --no-scripts',
     'composer install --no-dev --no-interaction --prefer-dist --no-scripts',
     'yarn install'
 ]
@@ -11,7 +12,7 @@ cmds = [
 cmds = [
     'yarn build',
     'composer dump-autoload --optimize',
-    'php bin/console cache:clear --env=prod',
+    'APP_RUNTIME_ENV=prod php bin/console cache:clear --env=prod',
     'php bin/console assets:install public'
 ]
 
@@ -20,3 +21,4 @@ cmd = 'php-fpm'
 
 [variables]
 APP_ENV = "prod"
+APP_RUNTIME_ENV = "prod"
