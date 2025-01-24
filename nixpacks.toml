@@ -1,28 +1,7 @@
 [phases.setup]
-nixPkgs = ['nodejs', 'yarn', 'php82', 'php82Packages.composer']
+nixPkgs = [
+  "...",
 
-[phases.install]
-cmds = [
-    'echo "Testing DATABASE_URL: $DATABASE_URL"',
-    'if [ -z "$DATABASE_URL" ]; then echo "DATABASE_URL is not set!" && exit 1; fi',
-    'rm -f composer.lock',
-    'composer require symfony/runtime:"^7.1" --no-scripts',
-    'composer install --no-dev --no-interaction --prefer-dist --no-scripts',
-    'yarn install'
+  # https://nixos.org/manual/nixpkgs/stable/#var-meta-priority
+  '(lib.recursiveUpdate php83Packages.composer { meta.priority = php83Packages.composer.meta.priority or 0 -1; })',
 ]
-
-[phases.build]
-cmds = [
-    'yarn build',
-    'composer dump-autoload --optimize',
-    'APP_RUNTIME_ENV=prod php bin/console cache:clear --env=prod',
-    'php bin/console assets:install public'
-]
-
-[start]
-cmd = 'php-fpm -F -R'
-
-[variables]
-COMPOSER_ALLOW_SUPERUSER = "1"
-APP_ENV = "prod"
-APP_RUNTIME_ENV = "prod"
