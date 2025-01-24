@@ -3,15 +3,20 @@ nixPkgs = ['nodejs', 'yarn', 'php82', 'php82Packages.composer']
 
 [phases.install]
 cmds = [
-    'composer install --no-dev --no-interaction --prefer-dist',
+    'composer install --no-dev --no-interaction --prefer-dist --no-scripts',
     'yarn install'
 ]
 
 [phases.build]
 cmds = [
     'yarn build',
-    'composer dump-env prod'
+    'composer dump-autoload --optimize',
+    'php bin/console cache:clear --env=prod',
+    'php bin/console assets:install public'
 ]
 
 [start]
 cmd = 'php-fpm'
+
+[variables]
+APP_ENV = "prod"
