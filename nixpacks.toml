@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ['nodejs', 'yarn', 'php', 'composer']
+nixPkgs = ['nodejs', 'yarn', 'php82', 'php82Packages.composer']
 
 [phases.install]
 cmds = [
@@ -14,4 +14,4 @@ cmds = [
 ]
 
 [start]
-cmd = 'php-fpm' 
+cmd = 'php-fpm'
