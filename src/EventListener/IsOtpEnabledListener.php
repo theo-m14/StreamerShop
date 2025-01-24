@@ -23,8 +23,6 @@ final class IsOtpEnabledListener
             return;
         }
 
-        error_log("je redirige pas");
-
         //Get user if exist
         /** @var \App\Entity\User $user */
         $user = $this->security->getUser();
@@ -35,7 +33,6 @@ final class IsOtpEnabledListener
         //If user is not enabled and not on the enableOtp page, redirect to enableOtp page
         if($user && !$user->isOtpEnabled()){
             
-            error_log("Je redirige");
             if($request->getPathInfo() != '/generateQrCode' && $request->getPathInfo() != '/enableOtp' && $request->getPathInfo() != '/checkOtp' && $request->getPathInfo() != '/verify/email') {
                 //Rediriger vers la page d'activation de son authenticator
                 $redirectResponse = new RedirectResponse('/enableOtp');
