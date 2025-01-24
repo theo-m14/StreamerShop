@@ -1,6 +1,11 @@
 input:-webkit-autofill,
+input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-internal-autofill-selected {
+input:-webkit-autofill:active,
+input:-internal-autofill-selected,
+select:-internal-autofill-selected,
+select:-webkit-autofill,
+select:-webkit-autofill:focus {
     transition: background-color 0s 600000s, color 0s 600000s !important;
 }
 
@@ -48,9 +53,9 @@ img{
     display: block;
 }
 
-input:invalid {
-    border-color: red;
-}
+// input:invalid {
+//     border-color: red;
+// }
 
 .cart-icon{
     position: fixed;
@@ -89,6 +94,14 @@ input:invalid {
 
 .register-form input:invalid{
     border-color: hsl(221, 14%, calc(24% + 0%)) !important;
+}
+
+.table td, .table th{
+    vertical-align: middle !important;
+}
+
+.product-card{
+    width: 300px;
 }
 
 

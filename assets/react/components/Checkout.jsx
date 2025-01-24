@@ -19,9 +19,45 @@ export default function ({cart}) {
     });
   }};
   const [adress, setAdress] = React.useState(null);
+
+  const handleAdressRegistration = (adress) => {
+    setAdress(adress);
+    createCheckoutSession(adress);
+  }
+
+    const createCheckoutSession = async (adress) => {
+      try {
+          const response = await fetch('/checkout', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  cart: cart.map(item => ({
+                      id: item.id,
+                      name: item.title,
+                      price: item.price,
+                      quantity: item.quantitySelected
+                  })),
+                  adress: adress
+              })
+          });
+
+          if (!response.ok) {
+              throw new Error('Erreur lors du checkout');
+          }
+
+          const checkoutSession = await response.json();
+
+          // Gérer la réponse de Stripe ici
+          setClientSecret(checkoutSession.client_secret);
+      } catch (error) {
+          console.error('Erreur:', error);
+      }
+    }
   return (
     <>
-      <AdressSelection setAdress={setAdress} setClientSecret={setClientSecret} cart={cart} />
+      <AdressSelection handleAdressRegistration={handleAdressRegistration} />
       {adress && clientSecret && (
         <div className="container is-max-desktop">
           <EmbeddedCheckoutProvider

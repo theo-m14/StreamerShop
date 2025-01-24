@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BoxtalParcelPointMap } from '@boxtal/parcel-point-map';
 
-export default function AdressSelection({ setAdress, setClientSecret, cart }) {
+export default function AdressSelection({ handleAdressRegistration }) {
     const { 
         register, 
         handleSubmit, 
@@ -88,40 +88,8 @@ export default function AdressSelection({ setAdress, setClientSecret, cart }) {
             parcelPoint
         };
         // Traitement final des données
-        setAdress(finalData);
-        createCheckoutSession(finalData);
+        handleAdressRegistration(finalData);
     });
-
-    const createCheckoutSession = async (finalData) => {
-        try {
-            const response = await fetch('/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cart: cart.map(item => ({
-                        id: item.id,
-                        name: item.title,
-                        price: item.price,
-                        quantity: item.quantitySelected
-                    })),
-                    adress: finalData
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Erreur lors du checkout');
-            }
-
-            const checkoutSession = await response.json();
-
-            // Gérer la réponse de Stripe ici
-            setClientSecret(checkoutSession.client_secret);
-        } catch (error) {
-            console.error('Erreur:', error);
-        }
-    }
 
     return (
         <div className="container is-max-desktop">

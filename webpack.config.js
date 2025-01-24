@@ -22,6 +22,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('burgerToggle', './assets/burgerToggle.js')
+    .addEntry('imageFileName', './assets/imageFileName.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

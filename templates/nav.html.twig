@@ -23,6 +23,7 @@
 						                {% endif %}
 						                <a href="{{ path('app_shop', {'username': app.user.username}) }}" class="navbar-item">Ma boutique</a>
 						                <a href="{{ path('app_vendor_orders') }}" class="navbar-item">Mes commandes</a>
+										<a href="{{ path('app_product_index') }}" class="navbar-item">Mes produits</a>
 						                <a href="{{ path('app_account') }}" class="navbar-item">Mon compte</a>
 						            {% endif %}
 						        </div>
@@ -31,9 +32,9 @@
 						        <div class="is-flex is-align-items-center is-justify-content-space-evenly">
 						            <div id="theme-toggle" {{ react_component('ThemeToggle') }}></div>
 						            {% if app.user %}
-						                <a href="{{ path('app_logout') }}" class="button is-danger">Déconnexion</a>
+						                <a href="{{ path('app_logout') }}" class="button is-danger ml-2">Déconnexion</a>
 						            {% else %}
-						                <a href="{{ path('app_login') }}" class="button is-primary">Connexion</a>
+						                <a href="{{ path('app_login') }}" class="button is-primary ml-2">Connexion</a>
 						            {% endif %}
 						            </div>
 						            </div>

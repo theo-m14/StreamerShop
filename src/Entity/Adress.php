@@ -14,6 +14,7 @@ class Adress
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:order'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

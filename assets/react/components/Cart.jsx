@@ -72,10 +72,13 @@ export default function ({cart, removeFromCart, setCartisValidate}) {
                                                 <i className="fas fa-minus"></i>
                                             </span>
                                         </button>}
+                                        {product.quantitySelected === 1 && <button className="button is-danger" onClick={() => removeFromCart(product.id)}>
+                                            <i className="fas fa-trash"></i>
+                                        </button>}
                                         </div>
                                     </div>
                                             {/* Si la quantité est 1, supprimer le produit, sinon diminuer la quantité avec un bouton - */}
-                                {product.quantitySelected === 1 && <button className="button is-danger" onClick={() => removeFromCart(product.id)}>Supprimer</button>}
+                                
                                 
                                 </div>
                             </div>

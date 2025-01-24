@@ -3,40 +3,47 @@
 {% block title %}Product{% endblock %}
 
 {% block body %}
-    <h1>Product</h1>
+    
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
+    <div class="container is-max-tablet">
+        <div class="box">
+            <h1 class="title is-4">Détails du produit</h1>
+            <table class="table is-fullwidth has-text-centered">
+                <tbody>
+                    <tr>
+                <th class="has-text-centered">Id</th>
                 <td>{{ product.id }}</td>
             </tr>
             <tr>
-                <th>Ref</th>
+                <th class="has-text-centered">Ref</th>
                 <td>{{ product.ref }}</td>
             </tr>
             <tr>
-                <th>Title</th>
+                <th class="has-text-centered">Title</th>
                 <td>{{ product.title }}</td>
             </tr>
             <tr>
-                <th>Image</th>
+                <th class="has-text-centered">Image</th>
                 <td><img src="{{ asset('images/products/' ~ product.imageName) }}" alt="{{ product.title }}" /></td>
             </tr>
             <tr>
-                <th>Price</th>
+                <th class="has-text-centered">Price</th>
                 <td>{{ product.price }}</td>
             </tr>
             <tr>
-                <th>Stock</th>
+                <th class="has-text-centered">Stock</th>
                 <td>{{ product.stock }}</td>
-            </tr>
-        </tbody>
-    </table>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <a href="{{ path('app_product_index') }}">back to list</a>
+    <div class="buttons is-centered mt-5">
+        <a class="button is-primary"  href="{{ path('app_product_index') }}">Retour à la liste</a>
+        <a class="button is-primary"  href="{{ path('app_product_edit', {'id': product.id}) }}">Modifier</a>
+        {{ include('product/_delete_form.html.twig') }}
+    </div>
 
-    <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>
 
-    {{ include('product/_delete_form.html.twig') }}
 {% endblock %}

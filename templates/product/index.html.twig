@@ -1,21 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Product index{% endblock %}
+{% block title %}Mes produits{% endblock %}
 
 {% block body %}
-    <h1>Product List</h1>
-    <a href="{{ path('app_vendor_orders') }}">Orders</a>
-
-    <table class="table">
+    <h1 class="has-text-centered is-size-3 mb-4">Mes produits</h1>
+    <div class="buttons is-centered">
+        <a href="{{ path('app_product_new') }}" class="button is-primary">Créer un nouveau produit</a>
+    </div>
+    <table class="table is-striped is-fullwidth has-text-centered">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Ref</th>
-                <th>Title</th>
-                <th>Image</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>actions</th>
+                <th class="has-text-centered">Id</th>
+                <th class="has-text-centered">Ref</th>
+                <th class="has-text-centered">Title</th>
+                <th class="has-text-centered">Image</th>
+                <th class="has-text-centered">Price</th>
+                <th class="has-text-centered">Stock</th>
+                <th class="has-text-centered">actions</th>
             </tr>
         </thead>
         <tbody>
@@ -28,17 +29,19 @@
                 <td>{{ product.price }}</td>
                 <td>{{ product.stock }}</td>
                 <td>
-                    <a href="{{ path('app_product_show', {'id': product.id}) }}">show</a>
-                    <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>
+                    <div class="buttons is-centered">
+                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="button is-primary">Voir</a>
+                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="button is-info">Modifier</a>
+                    </div>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="7">no records found</td>
+                <td colspan="7" class="has-text-centered">Aucun produit trouvé</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_product_new') }}">Create new</a>
+    
 {% endblock %}

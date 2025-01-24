@@ -35,12 +35,14 @@ export default function ({initialProducts, username}) {
             </div>
         ) : (
             <>
-            <div className="shop-container is-flex is-flex-wrap-wrap is-justify-content-center container">
+            <div className="shop-container is-flex is-flex-wrap-wrap is-justify-content-space-evenly container">
                 {products.map((product) => (
-                <ProductCard key={product.id} product={product} addToCart={addToCart} />
-            ))}
-        </div>
-        <Cart cart={cart} removeFromCart={removeFromCart} setCartisValidate={setCartisValidate}/>
+                    <div key={product.id} className="is-flex is-flex-direction-column" style={{width: '300px', margin: '1rem'}}>
+                        <ProductCard product={product} addToCart={addToCart} />
+                    </div>
+                ))}
+            </div>
+            <Cart cart={cart} removeFromCart={removeFromCart} setCartisValidate={setCartisValidate}/>
             </>
         )}
         </>

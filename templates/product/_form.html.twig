@@ -1,4 +1,36 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+<div class="container is-max-tablet">
+{{ form_start(form, {'attr': {'class': 'box '}}) }}
+    <h1 class="title is-4">Création d'un produit</h1>
+    {{ form_label(form.ref, 'Référence', {'class': 'label'}) }}
+    {{ form_widget(form.ref, {'attr': {'class': 'input'}}) }}
+    {{ form_label(form.title, 'Titre', {'class': 'label'}) }}
+    {{ form_widget(form.title, {'attr': {'class': 'input'}}) }}
+    <div class="file has-name mt-5 is-fullwidth">
+        <label class="file-label">
+            {{ form_widget(form.imageFile, {'attr': {'class': 'file-input', 'id': 'product_imageFile'}}) }}
+            <span class="file-cta">
+            <span class="file-icon">
+                <i class="fas fa-upload"></i>
+            </span>
+            <span class="file-label"> Choisir une image </span>
+            </span>
+            <span class="file-name" id="product_imageFile_name"></span>
+        </label>
+    </div>
+    
+    {{ form_label(form.price, 'Prix', {'class': 'label'}) }}
+    {{ form_widget(form.price, {'attr': {'class': 'input'}}) }}
+    {{ form_label(form.stock, 'Stock', {'class': 'label'}) }}
+    {{ form_widget(form.stock, {'attr': {'class': 'input'}}) }}
+    <div class="field is-grouped mt-5">
+        {{ form_label(form.isVisible, 'Visible sur le site', {'class': 'label'}) }}
+        {{ form_widget(form.isVisible, {'attr': {'class': 'checkbox'}}) }}
+    </div>
+
+    <div class="buttons is-centered">
+        <button class="button is-primary">{{ button_label|default('Créer') }}</button>
+    </div>
 {{ form_end(form) }}
+</div>
+

@@ -28,7 +28,7 @@ class Product
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:product'])]
+    #[Groups(['read:product', 'read:order'])]
     private ?string $imageName = null;
 
     #[Vich\UploadableField(mapping: 'products', fileNameProperty: 'imageName', size: 'imageSize')]
