@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = ['nodejs', 'yarn', 'php', 'composer']
+
+[phases.install]
+cmds = [
+    'composer install --no-dev --no-interaction --prefer-dist',
+    'yarn install'
+]
+
+[phases.build]
+cmds = [
+    'yarn build',
+    'composer dump-env prod'
+]
+
+[start]
+cmd = 'php-fpm' 
