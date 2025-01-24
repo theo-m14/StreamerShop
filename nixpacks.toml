@@ -17,6 +17,8 @@ cmds = [
     'composer dump-autoload --optimize',
     'APP_RUNTIME_ENV=prod php bin/console cache:clear --env=prod',
     'php bin/console assets:install public'
+    'which php-fpm',
+    'php-fpm -i'
 ]
 
 [start]
