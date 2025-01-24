@@ -16,13 +16,11 @@ cmds = [
     'yarn build',
     'composer dump-autoload --optimize',
     'APP_RUNTIME_ENV=prod php bin/console cache:clear --env=prod',
-    'php bin/console assets:install public',
-    'which php-fpm',
-    'php-fpm -i'
+    'php bin/console assets:install public'
 ]
 
 [start]
-cmd = 'php-fpm'
+cmd = 'php-fpm -F -R'
 
 [variables]
 COMPOSER_ALLOW_SUPERUSER = "1"
