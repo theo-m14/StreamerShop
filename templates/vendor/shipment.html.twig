@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes expéditions{% endblock %}
+
+{% block body %}
+    <h1 class="mb-5 is-size-2">Mes expéditions</h1>
+    <div {{ react_component('ShipmentController', { initialShipments: shipments, currentUser: user }) }}>
+{% endblock %}

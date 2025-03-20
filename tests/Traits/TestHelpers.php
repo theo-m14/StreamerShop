@@ -6,7 +6,6 @@ use App\Entity\Plan;
 use App\Entity\User;
 use App\Entity\Subscription;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 trait TestHelpers

@@ -115,6 +115,10 @@ class ShopController extends AbstractController
 
         $accountId = $this->getAccountIdByProductId($cart[0]['id'], $entityManager);
 
+        //On regarde si l'utilisateur a déjà acheté un produit aujourd'hui
+        $userAlreadyBuyProductToday = $entityManager->getRepository(Order::class)->checkIfUserAlreadyBuyProductToday($adress['email'], $adress['phone']);
+        
+
         foreach ($cart as $item) {
             $product = [
                 'price_data' => [
@@ -128,11 +132,28 @@ class ShopController extends AbstractController
             $total += $item['price'] * $item['quantity'];
         }
 
+
+        //Si l'utilisateur ,n'a pas déjà acheté un produit aujourd'hui on rajoute le prix de livraison à la commande
+        if (!$userAlreadyBuyProductToday) {
+            $deliveryPrice = $this->getDeliveryPrice($cart[0]['id'], $entityManager);
+
+            $delivery = [
+                'price_data' => [
+                    'currency' => 'eur',
+                    'product_data' => ['name' => 'Livraison'],
+                    'unit_amount' => $deliveryPrice * 100,
+                ],
+                'quantity' => 1,
+            ];
+            $line_items[] = $delivery;
+            $total += $deliveryPrice;
+        }
+
         $checkoutSession = $stripe->checkout->sessions->create([
             'line_items' => $line_items,
             'payment_intent_data' => [
-                //On prends 0.2% de la transaction arrondi à 0.01 puis converti en centimes
-                'application_fee_amount' => round((0.2 / 100) * $total, 2) * 100,
+                //On prends 6.5% + de la transaction arrondi à 0.01 puis converti en centimes
+                'application_fee_amount' => round(((6.5 / 100) * $total) + 0.25, 2) * 100,
                 'transfer_data' => ['destination' => $accountId],
             ],
             'mode' => 'payment',
@@ -151,7 +172,6 @@ class ShopController extends AbstractController
         $sessionId = $request->query->get('session_id');
         $stripe = new \Stripe\StripeClient($this->getParameter('stripe_api_key'));
         $checkoutSession = $stripe->checkout->sessions->retrieve($sessionId);
-        dd($checkoutSession);
         return $this->render('shop/checkout_success.html.twig', ['checkoutSession' => $checkoutSession]);
     }
 
@@ -159,6 +179,12 @@ class ShopController extends AbstractController
     {
         $product = $entityManager->getRepository(Product::class)->find($productId);
         return $product->getUser()->getStripeConnectId();
+    }
+
+    private function getDeliveryPrice(int $productId, EntityManagerInterface $entityManager): float
+    {
+        $product = $entityManager->getRepository(Product::class)->find($productId);
+        return $product->getUser()->getDeliveryPrice();
     }
 
     public function createOrder(string $checkoutSessionId, array $cart, float $total, EntityManagerInterface $entityManager, array $adressInfo): void
@@ -188,6 +214,7 @@ class ShopController extends AbstractController
         $adress->setPostalCode($adressInfo['zipCode']);
         $adress->setAdressLine($adressInfo['street']);
         $adress->setParcelPointCode($adressInfo['parcelPoint']['code']);
+        $adress->setParcelPointName($adressInfo['parcelPoint']['name']);
         //$adress->setAdditionalInformation($adress['additionalInformation']);
         $order->setAdress($adress);
         $entityManager->persist($adress);

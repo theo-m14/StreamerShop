@@ -4,3 +4,6 @@ framework:
       stripe:
         service: App\Webhook\StripeRequestParser
         secret: '%env(STRIPE_API_KEY)%'
+      boxtal:
+        service: App\Webhook\BoxtalRequestParser
+        secret: your_secret_here

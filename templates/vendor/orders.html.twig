@@ -4,5 +4,5 @@
 
 {% block body %}
     <h1 class="mb-5 is-size-2">Mes commandes</h1>
-    <div {{ react_component('OrderController', { initialOrders: orders }) }}>
+    <div {{ react_component('OrderController', { initialOrders: orders, currentUser: user }) }}>
 {% endblock %}
