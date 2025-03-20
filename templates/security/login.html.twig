@@ -5,17 +5,16 @@
 {% block body %}
     <div class="container is-max-tablet">
                     <form method="post" class="box">
+                        
+
+                        <h1 class="title is-4 mb-3 font-weight-normal">Connexion</h1>
                         {% if error %}
-                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                        {% endif %}
-
-                        {% if app.user %}
-                            <div class="mb-3">
-                                Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
+                            <div class="notification is-danger">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
                             </div>
-                        {% endif %}
 
-                        <h1 class="h3 mb-3 font-weight-normal">Veuillez vous connecter</h1>
+
+                        {% endif %}
                         <div class="field">
                         <label class="label">Email</label>
                             <div class="control has-icons-left has-icons-right">

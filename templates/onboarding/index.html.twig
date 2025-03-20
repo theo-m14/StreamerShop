@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="container mt-6">
+    <div class="box mb-6">
+        <h2 class="title is-3 has-text-centered">Configuration des services</h2>
+        <p class="subtitle is-5 has-text-centered">
+            <i class="fas fa-shield-alt mr-2"></i>Votre compte est sécurisé (2FA activé), configurez maintenant :
+        </p>
+    </div>
+
+    <div class="columns is-multiline is-centered">
+        <div class="column is-half">
+            <div class="box has-text-centered">
+                <h3 class="title is-4 mb-4">
+                    {% if steps.stripe %}
+                        <i class="fas fa-check-circle has-text-success mr-2"></i>
+                    {% endif %}
+                    Création compte Stripe
+                </h3>
+                {% if not steps.stripe %}
+                    <a href="{{ path('stripe_onboarding') }}" class="button is-primary is-medium">
+                        <i class="fab fa-stripe mr-2"></i>Configurer
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="column is-half">
+            <div class="box has-text-centered">
+                <h3 class="title is-4 mb-4">
+                    {% if steps.boxtal %}
+                        <i class="fas fa-check-circle has-text-success mr-2"></i>
+                    {% endif %}
+                    Configuration Boxtal
+                </h3>
+                {% if not steps.boxtal %}
+                    <a href="{{ path('boxtal_onboarding') }}" class="button is-info is-medium">
+                        <i class="fas fa-truck-moving mr-2"></i>Configurer
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if steps.stripe and steps.boxtal %}
+            <div class="column is-full has-text-centered mt-6">
+                <a href="{{ path('app_home') }}" class="button is-success is-large">
+                    <i class="fas fa-flag-checkered mr-2"></i>Terminer la configuration
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div> 
+
+{% endblock %}

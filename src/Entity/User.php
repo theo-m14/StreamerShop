@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
@@ -84,12 +85,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user')]
     private Collection $orders;
 
+    /**
+     * @var Collection<int, Adress>
+     */
+    #[ORM\OneToMany(targetEntity: Adress::class, mappedBy: 'user')]
+    #[Groups(['read:user'])]
+    private Collection $adress;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $boxtalApiKey;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $boxtalApiSecret;
+
+    #[ORM\Column(options: ["default" => false])]
+    private bool $isStripeRegistered = false;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $deliveryPrice = null;
+
     public function __construct()
     {
         $this->subscriptions = new ArrayCollection();
         $this->invoices = new ArrayCollection();
         $this->products = new ArrayCollection();
         $this->orders = new ArrayCollection();
+        $this->adress = new ArrayCollection();
     }
 
     public function isOtpEnabled(): ?bool
@@ -386,6 +407,97 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
                 $order->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Adress>
+     */
+    public function getAdress(): Collection
+    {
+        return $this->adress;
+    }
+
+    public function addAdress(Adress $adress): static
+    {
+        if (!$this->adress->contains($adress)) {
+            $this->adress->add($adress);
+            $adress->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdress(Adress $adress): static
+    {
+        if ($this->adress->removeElement($adress)) {
+            // set the owning side to null (unless already changed)
+            if ($adress->getUser() === $this) {
+                $adress->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getBoxtalApiKey(): ?string
+    {
+        return $this->boxtalApiKey;
+    }
+
+    public function setBoxtalApiKey(?string $boxtalApiKey): self
+    {
+        $this->boxtalApiKey = $boxtalApiKey;
+        return $this;
+    }
+
+    public function getBoxtalApiSecret(): ?string
+    {
+        return $this->boxtalApiSecret;
+    }
+
+    public function setBoxtalApiSecret(?string $boxtalApiSecret): self
+    {
+        $this->boxtalApiSecret = $boxtalApiSecret;
+        return $this;
+    }
+
+    public function isOnboardingComplete(): bool
+    {
+        return $this->isStripeRegistered
+            && $this->boxtalApiKey !== null 
+            && $this->boxtalApiSecret !== null;
+    }
+
+    public function getOnboardingSteps(): array
+    {
+        return [
+            'stripe' => $this->isStripeRegistered,
+            'boxtal' => $this->boxtalApiKey !== null && $this->boxtalApiSecret !== null
+        ];
+    }
+
+    public function isStripeRegistered(): bool
+    {
+        return $this->isStripeRegistered;
+    }
+
+    public function setIsStripeRegistered(bool $isStripeRegistered): static
+    {
+        $this->isStripeRegistered = $isStripeRegistered;
+
+        return $this;
+    }
+
+    public function getDeliveryPrice(): ?float
+    {
+        return $this->deliveryPrice;
+    }
+
+    public function setDeliveryPrice(float $deliveryPrice): static
+    {
+        $this->deliveryPrice = $deliveryPrice;
 
         return $this;
     }

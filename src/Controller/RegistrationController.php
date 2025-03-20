@@ -52,7 +52,8 @@ class RegistrationController extends AbstractController
 
             // do anything else you need here, like send an email
 
-            return $security->login($user, 'form_login', 'main');
+            // Redirection directe vers la configuration 2FA
+            return $security->login($user, 'main', 'main');
         }
 
         return $this->render('registration/register.html.twig', [

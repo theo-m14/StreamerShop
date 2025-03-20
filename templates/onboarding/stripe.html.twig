@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stripe Onboarding{% endblock %}
+
+{% block body %}
+<div  {{ react_component('StripeOnboardingController', {
+    'stripeAccountId': stripeAccountId
+}) }}>
+
+    </div>
+
+{% endblock %}

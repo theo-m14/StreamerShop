@@ -30,13 +30,22 @@ final class IsOtpEnabledListener
         //Get request
         $request = $event->getRequest();
 
-        //If user is not enabled and not on the enableOtp page, redirect to enableOtp page
-        if($user && !$user->isOtpEnabled()){
+        if ($user) {
+            // Étape 1 : Vérification 2FA
+
+            if (!$user->isOtpEnabled()) {
+                $allowedRoutes = ['enableOtp', 'checkOtp', 'generateQrCode', 'verify/email'];
+                if (!in_array($request->get('_route'), $allowedRoutes)) {
+                    $event->setResponse(new RedirectResponse('/enableOtp'));
+                }
+            }
+            // Étape 2 : Vérification onboarding si 2FA OK
             
-            if($request->getPathInfo() != '/generateQrCode' && $request->getPathInfo() != '/enableOtp' && $request->getPathInfo() != '/checkOtp' && $request->getPathInfo() != '/verify/email') {
-                //Rediriger vers la page d'activation de son authenticator
-                $redirectResponse = new RedirectResponse('/enableOtp');
-                $event->setResponse($redirectResponse);
+            else if (!$user->isOnboardingComplete()) {
+                $allowedRoutes = ['app_onboarding', 'stripe_onboarding', 'boxtal_onboarding','2fa_login','createStripeSession','createStripeAccount','setUserStripeRegistered'];
+                if (!in_array($request->get('_route'), $allowedRoutes)) {
+                    $event->setResponse(new RedirectResponse('/onboarding'));
+                }
             }
         }
     }
