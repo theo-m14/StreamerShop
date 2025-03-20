@@ -1178,10 +1178,10 @@
   resolved "https://registry.npmjs.org/@sinclair/typebox/-/typebox-0.27.8.tgz"
   integrity sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==
 
-"@stripe/connect-js@^3.3.18":
-  version "3.3.18"
-  resolved "https://registry.npmjs.org/@stripe/connect-js/-/connect-js-3.3.18.tgz"
-  integrity sha512-2ZbG5uQo9br+E0Ed7+kjpuDmdNHEfUzpQakSqdM+lgLNd7HCK1vmtJEbppb/sRTF2Q/pTqjtIYpw9+lPwLjBmA==
+"@stripe/connect-js@^3.3.21":
+  version "3.3.21"
+  resolved "https://registry.yarnpkg.com/@stripe/connect-js/-/connect-js-3.3.21.tgz#da3bfea174b6f1be72d0566e04046eae2edc2f34"
+  integrity sha512-MsUtZLIScosvrcB0c5HKmHUq5fnBhqxi69TPmUr5nGRcHIkGuwqUPIrsJEAkiPeSh+Opq2GCyt7dSNqsOGYsVg==
 
 "@stripe/react-connect-js@^3.3.19":
   version "3.3.19"

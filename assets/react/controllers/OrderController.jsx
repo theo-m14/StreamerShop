@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import OrderItem from '../components/OrderItem';
 import ShipmentForm from '../components/ShipmentForm';
 
-export default function ({ initialOrders }) {
+export default function ({ initialOrders, currentUser }) {
 
     const [orders,setOrders] = useState(JSON.parse(initialOrders));
+
+    const [user,setUser] = useState(JSON.parse(currentUser));
 
     const [currentStatusDisplay, setCurrentStatusDisplay] = useState("paid");
 
     const [shipment,setShipment] = useState({
         adress: null,
+        vendorAdress: null,
         orders: [],
         productConfirmation: false,
         packages: [
@@ -28,11 +31,32 @@ export default function ({ initialOrders }) {
         ],
     });
 
+    //Titre en fonction du status
+    const orderDisplayTitle = {
+        paid: "Commandes payées",
+        waitingPayment: "Commandes en attente de paiement",
+        pending: "Commandes en attente",
+        batched: "Commandes expédiées"
+    };
+
+
+
     const handleCreateShipmentForm = () => {
         const selectedOrders = orders.filter((order) => order.isSelected);
-        setShipment({...shipment, orders: selectedOrders});
+        setShipment({
+            adress: null,
+            vendorAdress: null,
+            orders: selectedOrders,
+            productConfirmation: false,
+            packages: [{
+                type: null,
+                dimension: { width: null, height: null, length: null, weight: null },
+                content: null,
+                stackable: null,
+                externalId: null
+            }]
+        });
         document.getElementById("createShipmentModal").classList.add("is-active");
-        
     }
 
     return (
@@ -43,11 +67,14 @@ export default function ({ initialOrders }) {
                     <li className={currentStatusDisplay == "paid" ? "is-active" : ""}><a className="is-active" onClick={() => setCurrentStatusDisplay("paid")}>Payées</a></li>
                     <li className={currentStatusDisplay == "waitingPayment" ? "is-active" : ""}><a className="is-active" onClick={() => setCurrentStatusDisplay("waitingPayment")}>En attente de paiement</a></li>
                     <li className={currentStatusDisplay == "pending" ? "is-active" : ""}><a className="is-active" onClick={() => setCurrentStatusDisplay("pending")}>En attente</a></li>
+                    <li className={currentStatusDisplay == "batched" ? "is-active" : ""}><a className="is-active" onClick={() => setCurrentStatusDisplay("batched")}>Expédiées</a></li>
                 </ul>
                 </div>
+
                 {/* Afficher le titre en fonction du status en français pas paid mais payées*/}
-                <h2 className="has-text-centered is-size-4 mt-6 mb-6">Commandes {currentStatusDisplay === "paid" ? "payées" : currentStatusDisplay === "waitingPayment" ? "en attente de paiement" : "en attente"}</h2>
+                <h2 className="has-text-centered is-size-4 mt-6 mb-6">{orderDisplayTitle[currentStatusDisplay]}</h2>
                 <div className="table-container">
+
                 <table className="table is-striped is-fullwidth has-text-centered">
                     <thead>
                         <tr>
@@ -73,7 +100,7 @@ export default function ({ initialOrders }) {
             <div className="modal" id="createShipmentModal">
                 <div className="modal-background" onClick={() => document.getElementById("createShipmentModal").classList.remove("is-active")}></div>
                 <div className="modal-content">
-                    <ShipmentForm shipment={shipment} orders={orders} setShipment={setShipment} />
+                    <ShipmentForm shipment={shipment} orders={orders} setShipment={setShipment} user={user} setOrders={setOrders} />
                 </div>
                 <div className="modal-close is-large" aria-label="close" onClick={() => document.getElementById("createShipmentModal").classList.remove("is-active")}></div>
             </div>

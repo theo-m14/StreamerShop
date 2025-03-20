@@ -15,17 +15,19 @@ class Contact
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:order'])]
+    #[Groups(['read:order', 'read:user'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:order'])]
+    #[Groups(['read:order', 'read:user'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:order', 'read:user'])]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:order', 'read:user'])]
     private ?string $email = null;
 
     public function getId(): ?int

@@ -4,12 +4,8 @@ import Cart from '../components/Cart';
 import useCart from '../hooks/useCart';
 import Checkout from '../components/Checkout';
 
-export default function ({initialProducts, username}) {
+export default function ({initialProducts}) {
     let productsArray = JSON.parse(initialProducts);
-
-    const [clientSecret, setClientSecret] = useState(null);
-
-    const [sessionId, setSessionId] = useState(null);
 
     const [products, setProducts] = useState(productsArray);
 

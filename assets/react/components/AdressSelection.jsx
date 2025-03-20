@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BoxtalParcelPointMap } from '@boxtal/parcel-point-map';
 
-export default function AdressSelection({ handleAdressRegistration }) {
+export default function AdressSelection({ handleAdressRegistration, userIsConnected = false }) {
     const { 
         register, 
         handleSubmit, 
@@ -91,6 +91,10 @@ export default function AdressSelection({ handleAdressRegistration }) {
         handleAdressRegistration(finalData);
     });
 
+    const registerUserAdress = (data) => {
+        console.log(data);
+    }
+
     return (
         <div className="container is-max-desktop">
             
@@ -158,7 +162,14 @@ export default function AdressSelection({ handleAdressRegistration }) {
 
             {parcelPoint && (
                 <>
-                    
+                    <div className="box">
+                        <h2 className="title is-4">Point relais sélectionné</h2>
+                        <p>{parcelPoint.name}</p>
+                        <p>{parcelPoint.location.country}</p>
+                        <p>{parcelPoint.location.zipCode}</p>
+                        <p>{parcelPoint.location.city}</p>
+                        <p>{parcelPoint.location.street}</p>
+                    </div>
                     <form onSubmit={onSubmitFinal} className="box">
                         <h2 className="title is-4">Informations personnelles</h2>
                         <div className="form-group field">
@@ -215,6 +226,11 @@ export default function AdressSelection({ handleAdressRegistration }) {
                             {errors.phone && <span className="help is-danger">{errors.phone.message}</span>}
                         </div>
 
+                        {userIsConnected && <div className="form-group field is-grouped">
+                            <input type="checkbox" className="checkbox" id="registerAdress" {...register("registerAdress")} />
+                            <label className="label" htmlFor="registerAdress">Enregistrer cette adresse</label>
+                        </div>}
+
                         <button 
                             type="submit" 
                             className="button is-primary"
@@ -225,6 +241,7 @@ export default function AdressSelection({ handleAdressRegistration }) {
                     </form>
                 </>
             )}
+
         </div>
     );
 }

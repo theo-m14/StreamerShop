@@ -34,6 +34,16 @@ services:
             $apiKey: '%env(STRIPE_API_KEY)%'
             $endpointSecret: '%env(STRIPE_ENDPOINT_SECRET)%'
 
+    App\Webhook\BoxtalRequestParser:
+        arguments:
+            $secret: '%env(BOXTAL_WEBHOOK_SECRET)%'
+
+    App\Service\BoxtalShippingServiceFactory:
+        arguments:
+            $httpClient: '@http_client'
+            $webhookSecret: '%env(BOXTAL_WEBHOOK_SECRET)%'
+
     
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+

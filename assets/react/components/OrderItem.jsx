@@ -9,7 +9,7 @@ export default function OrderItem({ order, setOrders, orders }) {
     }
 
     return (
-        <tr className={`orderItem ${isSelected ? 'is-selected' : ''}`} onClick={handleSelect}>
+        <tr className={`orderItem ${isSelected ? 'is-selected' : ''}`} onClick={order.statut.statut === "paid" ? handleSelect : null}>
                     {order.statut.statut === "paid" && <td onClick={handleSelect}><input type="checkbox" name="" id="" checked={isSelected} onChange={handleSelect} /></td>}
                     <td>{order.total} €</td>
                     <td>{order.createdAt.split('T')[0].split('-').reverse().join('/')} à {order.createdAt.split('T')[1].split(':')[0]}:{order.createdAt.split('T')[1].split(':')[1]}</td>
@@ -28,6 +28,6 @@ export default function OrderItem({ order, setOrders, orders }) {
                         <p>{order.adress.city}</p>
                         <p>{order.adress.adressLine}</p>
                     </td>
-                </tr>
+        </tr>
     )
 }

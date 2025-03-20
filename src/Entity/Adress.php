@@ -14,26 +14,26 @@ class Adress
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:order'])]
+    #[Groups(['read:order', 'read:user'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:order'])]
+    #[Groups(['read:order', 'read:user'])]
     private ?string $countryCode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:order'])]
+    #[Groups(['read:order', 'read:user'])]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:order'])]
+    #[Groups(['read:order', 'read:user'])]
     private ?string $postalCode = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:order'])]
+    #[Groups(['read:order', 'read:user'])]
     private ?string $adressLine = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -41,7 +41,7 @@ class Adress
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read:order'])]
+    #[Groups(['read:order', 'read:user'])]
     private ?Contact $contact = null;
 
     /**
@@ -51,7 +51,15 @@ class Adress
     private Collection $orders;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:user'])]
     private ?string $parcelPointCode = null;
+
+    #[ORM\ManyToOne(inversedBy: 'adress')]
+    private ?User $user = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['read:user', 'read:order'])]
+    private ?string $parcelPointName = null;
 
     public function __construct()
     {
@@ -185,6 +193,30 @@ class Adress
     public function setParcelPointCode(string $parcelPointCode): static
     {
         $this->parcelPointCode = $parcelPointCode;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getParcelPointName(): ?string
+    {
+        return $this->parcelPointName;
+    }
+
+    public function setParcelPointName(string $parcelPointName): static
+    {
+        $this->parcelPointName = $parcelPointName;
 
         return $this;
     }
