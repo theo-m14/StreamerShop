@@ -11,10 +11,10 @@ import {
       <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
         <ConnectAccountManagement
           // Optional:
-          // collectionOptions={{
-          //   fields: 'eventually_due',
-          //   futureRequirements: 'include',
-          // }}
+          collectionOptions={{
+            fields: 'eventually_due',
+            futureRequirements: 'include',
+          }}
         />
       </ConnectComponentsProvider>
     );
